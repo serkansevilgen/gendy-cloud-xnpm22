@@ -1,0 +1,124 @@
+#+TITLE: Host Computer Instructions for "GendyCloud"
+#+OPTIONS: toc:nil  ^:nil
+
+* Installation of Required Softwre (MACOS)
+
+** Install Homebrew
+
+#+BEGIN_SRC bash
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+#+END_SRC
+
+** Install Csound
+*** With Homebrew
+#+BEGIN_SRC bash
+  brew install csound
+#+END_SRC
+*** With package manager
+https://csound.com/download.html
+
+*** Check Csound version (6.18) (terminal)
+#+BEGIN_SRC bash
+  csound --version
+#+END_SRC
+*** Test Csound
+**** Save following as csd-test.csd in the same folder
+#+BEGIN_SRC csound
+<CsoundSynthesizer>
+<CsOptions>
+-odac
+</CsOptions>
+<CsInstruments>
+instr 1
+ aSin  poscil  0dbfs/4, 440
+       out     aSin
+endin
+</CsInstruments>
+<CsScore>
+i 1 0 5
+</CsScore>
+</CsoundSynthesizer>
+#+END_SRC
+
+**** Test Csound
+You should hear a tone for 5 seconds.
+#+BEGIN_SRC csound
+ csound csd-test.csd
+#+END_SRC
+
+** Download and Install NodeJS
+
+https://nodejs.org/dist/v18.12.1/node-v18.12.1.pkg
+
+(or the latest from https://nodejs.org )
+
+** Remote OSC
+
+/If your folder includes remote-osc/client, skip this step/
+
+https://github.com/serkansevilgen/remote-osc/archive/refs/heads/master.zip
+
+Extract zip and go to folder client/ and run 
+
+#+BEGIN_SRC bash
+  npm install
+#+END_SRC
+
+* Running software
+
+** Csound
+
+#+BEGIN_SRC bash
+  csound xnpm22.csd
+#+END_SRC
+
+Please keep /settings.csd/ file in the same folder
+
+** Remote OSC Client
+
+#+BEGIN_SRC bash
+  cd remote-osc/client
+  node client.js ./config.json
+#+END_SRC
+
+The config.json file should include the following
+
+#+BEGIN_SRC json
+  {
+      "serverAddress": "3.125.90.128",
+      "serverPort": 8081,
+      "clientAddress": "0.0.0.0",
+      "clientPort": 1337,
+      "appAddress": "127.0.0.1",
+      "appPort": 7770
+  }
+#+END_SRC
+
+** Web UI
+- Go to link
+http://xnpm22.serkansevilgen.com/
+
+network: /xnpm22
+ID: 0 (0 to 7)
+Name: Your name
+
+See "Performance Notes" page
+http://xnpm22.serkansevilgen.com/user-guide.html
+
+* Performance monitoring and debugging  
+** You should see the content of the config.json when you start Remote OSC client.
+** Whenever a performer sends data you should see it in Remote OSC client terminal like
+
+#+BEGIN_SRC json
+  {
+    address: '/xnpm22',
+    args: [
+      { type: 'i', value: 5 },
+      { type: 's', value: 'note_dur' },
+      { type: 'f', value:  13},
+      { type: 's', value:  'Serkan Sevilgen}
+    ]
+  }
+#+END_SRC
+The first value is userid (5), the second is the name of the parameter (note_dur) and its value (13). The last value is your name.
+** If you don't see the your actions on the Web Interface reflected at the Remote-OSC display, reload Web UI.
